@@ -11,7 +11,21 @@ return {
         -- LSP mappings
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr })
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr })
-        vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, { buffer = bufnr })
+
+        -- Leader so we don't bind over gt to navigate to the next tab.
+        vim.keymap.set('n', '<localleader>gt', vim.lsp.buf.type_definition, { buffer = bufnr })
+
+        vim.keymap.set("n", "<localleader>t", function()
+          local file = vim.fn.expand('%')
+          local alternate = file:match("_test%.go$") and file:gsub("_test%.go$", ".go") or file:gsub("%.go$", "_test.go")
+          vim.cmd('edit ' .. alternate)
+        end, { desc = 'Go to alternate test file' })
+
+        vim.keymap.set("n", "<localleader>T", function()
+          local file = vim.fn.expand('%')
+          local alternate = file:match("_test%.go$") and file:gsub("_test%.go$", ".go") or file:gsub("%.go$", "_test.go")
+          vim.cmd('vsplit ' .. alternate)
+        end, { desc = 'Open alternate test file in vsplit' })
 
         vim.api.nvim_create_autocmd("BufWritePre", {
           callback = function(args)
