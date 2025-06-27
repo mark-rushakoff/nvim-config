@@ -4,16 +4,22 @@ return {
     -- LSP servers you want to set up
     local lspconfig = require('lspconfig')
 
+    local common_on_attach = function(client, bufnr)
+      -- LSP mappings
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, desc = '[G]o to [D]efinition' })
+      vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr , desc = '[G]o to [I]mplementation' })
+
+      -- Leader so we don't bind over gt to navigate to the next tab.
+      vim.keymap.set('n', '<localleader>gt', vim.lsp.buf.type_definition, { buffer = bufnr, desc = '[G]o to [T]ype definition' })
+
+      vim.keymap.set('n', '<localleader>rn', vim.lsp.buf.rename, { buffer = bufnr, desc = '[R]efactor: re[N]ame' })
+    end
+
     -- Set up each LSP server
     lspconfig.gopls.setup({
       cmd = { os.getenv('HOME') .. '/go/bin/gopls' },
       on_attach = function(client, bufnr)
-        -- LSP mappings
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr })
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr })
-
-        -- Leader so we don't bind over gt to navigate to the next tab.
-        vim.keymap.set('n', '<localleader>gt', vim.lsp.buf.type_definition, { buffer = bufnr })
+        common_on_attach(client, bufnr)
 
         vim.keymap.set("n", "<localleader>t", function()
           local file = vim.fn.expand('%')
@@ -65,10 +71,7 @@ return {
         }
       },
       on_attach = function(client, bufnr)
-        -- LSP mappings (maybe these should be unified with Go somehow here).
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr })
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = bufnr })
-        vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, { buffer = bufnr })
+        common_on_attach(client, bufnr)
 
         vim.api.nvim_create_autocmd("BufWritePre", {
           pattern = {"*.zig", "*.zon"},
