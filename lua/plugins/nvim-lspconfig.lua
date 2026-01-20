@@ -16,7 +16,7 @@ return {
     end
 
     -- Set up each LSP server
-    lspconfig.gopls.setup({
+    vim.lsp.config('gopls', {
       cmd = { os.getenv('HOME') .. '/go/bin/gopls' },
       on_attach = function(client, bufnr)
         common_on_attach(client, bufnr)
@@ -57,10 +57,11 @@ return {
         })
       end,
     })
+    vim.lsp.enable('gopls')
 
     -- ZLS (LSP for Zig), mostly taken from:
     -- https://zigtools.org/zls/editors/vim/nvim-lspconfig/
-    lspconfig.zls.setup({
+    vim.lsp.config('zls', {
       -- Path to local build of ZLS
       cmd = { os.getenv('HOME') .. '/zsrc/zls/zig-out/bin/zls' },
       settings = {
@@ -81,5 +82,6 @@ return {
         })
       end,
     })
+    vim.lsp.enable('zls')
   end
 }
